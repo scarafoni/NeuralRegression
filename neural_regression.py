@@ -7,9 +7,9 @@ from pybrain.datasets.supervised import SupervisedDataSet as SDS
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.supervised.trainers import BackpropTrainer
 
-train_file = 'data/train.csv'
-validation_file = 'data/validation.csv'
-hidden_size = 50
+train_file = 'train.csv'
+validation_file = 'validation.csv'
+hidden_size = 5
 epochs = 5
 
 # load data
@@ -17,15 +17,10 @@ train = np.loadtxt( train_file, delimiter = ',' )
 validation = np.loadtxt( validation_file, delimiter = ',' )
 train = np.vstack(( train, validation ))
 x_train = train[:,0:-1]
-print('x_train', x_train)
 y_train = train[:,-1]
-print('y_train', y_train)
 y_train = y_train.reshape( -1, 1 )
-print('y_train2', y_train)
 input_size = x_train.shape[1]
-print('input_size', input_size)
 target_size = y_train.shape[1]
-print('target_size', target_size)
 
 # prepare dataset
 ds = SDS( input_size, target_size )
