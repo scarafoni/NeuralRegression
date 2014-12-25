@@ -1,7 +1,6 @@
 """runs iterations to train a neural network"""
 
 import numpy as np
-import cPickle as pickle
 from math import sqrt
 from pybrain.datasets.supervised import SupervisedDataSet as SDS
 from pybrain.tools.shortcuts import buildNetwork
