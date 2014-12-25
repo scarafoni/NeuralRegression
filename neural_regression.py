@@ -28,7 +28,8 @@ net = buildNetwork( input_size, hidden_size, target_size, bias = True )
 trainer = BackpropTrainer( net,ds )
 print "training for {} epochs...".format( epochs )
 for i in range( epochs ):
-mse = trainer.train()
-rmse = sqrt( mse )
-print "training RMSE, epoch {}: {}".format( i + 1, rmse )
+    mse = trainer.train()
+    rmse = sqrt( mse )
+    print "training RMSE, epoch {}: {}".format( i + 1, rmse )
+
 pickle.dump( net, open( output_model_file, 'wb' ))
