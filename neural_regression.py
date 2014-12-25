@@ -1,33 +1,34 @@
-"""predict regression based on a dataset"""
-
+"train a regression MLP"
 import numpy as np
 import cPickle as pickle
 from math import sqrt
 from pybrain.datasets.supervised import SupervisedDataSet as SDS
-from sklearn.metrics import mean_squared_error as MSE
-test_file = 'data/test.csv'
-model_file = 'model.pkl'
-output_predictions_file = 'predictions.txt'
-# load model
-net = pickle.load( open( model_file, 'rb' ))
+from pybrain.tools.shortcuts import buildNetwork
+from pybrain.supervised.trainers import BackpropTrainer
+train_file = 'data/train.csv'
+validation_file = 'data/validation.csv'
+output_model_file = 'model.pkl'
+hidden_size = 100
+epochs = 600
 # load data
-test = np.loadtxt( test_file, delimiter = ',' )
-x_test = test[:,0:-1]
-y_test = test[:,-1]
-y_test = y_test.reshape( -1, 1 )
-# you'll need labels. In case you don't have them...
-y_test_dummy = np.zeros( y_test.shape )
-input_size = x_test.shape[1]
-target_size = y_test.shape[1]
-assert( net.indim == input_size )
-assert( net.outdim == target_size )
+train = np.loadtxt( train_file, delimiter = ',' )
+validation = np.loadtxt( validation_file, delimiter = ',' )
+train = np.vstack(( train, validation ))
+x_train = train[:,0:-1]
+y_train = train[:,-1]
+y_train = y_train.reshape( -1, 1 )
+input_size = x_train.shape[1]
+target_size = y_train.shape[1]
 # prepare dataset
 ds = SDS( input_size, target_size )
-ds.setField( 'input', x_test )
-ds.setField( 'target', y_test_dummy )
-# predict
-p = net.activateOnDataset( ds )
-mse = MSE( y_test, p )
+ds.setField( 'input', x_train )
+ds.setField( 'target', y_train )
+# init and train
+net = buildNetwork( input_size, hidden_size, target_size, bias = True )
+trainer = BackpropTrainer( net,ds )
+print "training for {} epochs...".format( epochs )
+for i in range( epochs ):
+mse = trainer.train()
 rmse = sqrt( mse )
-print "testing RMSE:", rmse
-np.savetxt( output_predictions_file, p, fmt = '%.6f' )
+print "training RMSE, epoch {}: {}".format( i + 1, rmse )
+pickle.dump( net, open( output_model_file, 'wb' ))
